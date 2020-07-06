@@ -75,9 +75,8 @@ JustErrorDecoder has to deserialize error responses which are in the form of JSO
             <version>1.0.0</version>
         </dependency>
 2. Create business exception classes and extend JustException class. You will be forced to implement abstract methods to provide specific data about each error condition which the exception class is related to.
-3. Add a “_@ComponentScan_” annotation and put “_org.justhro.*_” to its basePackages property
-4. Throw your business exceptions where ever you like and let them be thrown from your controller tier
-5. Create SERVICE_NAME-api project which has “jar” as it’s packaging tag in it’s POM file. Put Feign clients, DTOs used by your service interfaces and also all business exceptions (which inherit JustAPIException) in the jar file. 
+3. Throw your business exceptions where ever you like and let them be thrown from your controller tier
+4. Create SERVICE_NAME-api project which has “jar” as it’s packaging tag in it’s POM file. Put Feign clients, DTOs used by your service interfaces and also all business exceptions (which inherit JustAPIException) in the jar file. 
     Also you need to put the following dependency in SERVICE_NAME-api’s pom file:
 
         <dependency>
@@ -85,7 +84,7 @@ JustErrorDecoder has to deserialize error responses which are in the form of JSO
             <artifactId>core</artifactId>
             <version>1.0.0</version>
         </dependency>
-6. Add SERVICE_NAME-api to your main project’s POM file as a dependency to be able to throw these Exceptions inside your business logic. DTOs also will be available to the main project to be used by controllers and services.
+5. Add SERVICE_NAME-api to your main project’s POM file as a dependency to be able to throw these Exceptions inside your business logic. DTOs also will be available to the main project to be used by controllers and services.
 
 
 ## 4-2 Client side
@@ -102,4 +101,4 @@ JustErrorDecoder has to deserialize error responses which are in the form of JSO
 
 2. Add SERVICE_NAME-api dependency to your POM file as a dependency. This way you do not have to create the service’s feign client and will simply inject it to your code. Also this will include service’s specific exception classes so that you will be able to catch them in your code when you call feign methods. 
 
-Just Decoder will automatically look up and construct all the subtypes of JustAPIException available in the “service API” library at client service startup. This way it throws a specific exception type for each error code received from the server. So you won’t write any ErrorDecoder.
+Just Decoder will automatically construct all the subtypes of JustAPIException available in the “service API” library at client service startup. This way it throws a specific exception type for each error code received from the server. So you won’t write any ErrorDecoder.
