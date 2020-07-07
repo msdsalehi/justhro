@@ -107,3 +107,8 @@ Just Decoder will automatically construct all the subtypes of JustAPIException a
 # 5 Advance topics
 ## 5-1 Internationalization
 To enable localized messages for “apiMessage” property, put “errors.properties” message bundle in the “resources” folder of the service application. You may support different languages by adding more bundles having “_lang” postfix in file name. For instance, to support French, the bundle name will be “errors_fr.properties”.
+
+## 5-2 Checked exceptions
+Sometimes it is hard to find available exceptions which are possible to be thrown from a method, due to the large number of low level API invocations. Besides that, sometimes a developer decides to use checked exceptions in order to force the caller to handle the specific exceptional situation.
+
+Fortunately there is another base Exception class namely JustAPICheckedException you can extend to achieve this.
