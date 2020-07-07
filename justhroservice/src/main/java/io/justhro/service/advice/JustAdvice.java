@@ -18,10 +18,7 @@ package io.justhro.service.advice;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.justhro.core.exception.JustAPIException;
-import io.justhro.core.exception.JustAccessDeniedAPIException;
-import io.justhro.core.exception.JustBadRequestAPIException;
-import io.justhro.core.exception.JustUnknownAPIException;
+import io.justhro.core.exception.*;
 import io.justhro.core.util.ReflectionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +38,6 @@ import org.springframework.web.util.UrlPathHelper;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import java.lang.reflect.Field;
 
 @ControllerAdvice
 public class JustAdvice {
@@ -53,35 +49,37 @@ public class JustAdvice {
     @Autowired
     private MessageSource errorMessages;
 
-    private void updateAPILocalizedMessage(JustAPIException instance) {
+    private void updateAPILocalizedMessage(Exception instance, String exClassName, String defaultApiMessage,
+                                           Object[] apiMessageArgs) {
         try {
-            String apiMessage = errorMessages.getMessage(instance.getClass().getName(),
-                    instance.getApiMessageArgs(), instance.getApiMessage(), LocaleContextHolder.getLocale());
+            String apiMessage = errorMessages.getMessage(exClassName,
+                    apiMessageArgs, defaultApiMessage, LocaleContextHolder.getLocale());
             ReflectionUtil.setFieldValue(instance, apiMessage, "apiMessage");
         } catch (Exception ex) {
-            LOGGER.warn("Exception occurred while trying to set apiMessage to : ["
-                    + ex.getClass().getSimpleName() + "].", ex);
+            LOGGER.warn("Exception occurred while trying to set apiMessage to : '{}'.",
+                    ex.getClass().getSimpleName(), ex);
         }
     }
 
     private ResponseEntity<JustAPIException> prepareInternalServerException(
             Throwable ex, JustAPIException instance, HttpStatus status) {
-        updateAPILocalizedMessage(instance);
+        updateAPILocalizedMessage(instance, instance.getClass().getName(), instance.getApiMessage(),
+                instance.getApiMessageArgs());
         try {
             instance.addCause(MAPPER.writeValueAsString(ex));
         } catch (JsonProcessingException e) {
-            LOGGER.warn("Exception occurred while trying to serialize " + ex.getClass().getSimpleName()
-                    + " for setting in JustAPIException cause property.", e);
+            LOGGER.warn("Exception occurred while trying to serialize '{}' for setting in JustAPIException " +
+                    "cause property.", ex.getClass().getSimpleName(), e);
         }
         return new ResponseEntity<>(instance, status);
     }
 
-    private void setPath(HttpServletRequest req, JustAPIException justAPIException) {
+    private void setPath(HttpServletRequest req, Exception justAPIException) {
         try {
             ReflectionUtil.setFieldValue(justAPIException, URL_PATH_HELPER.getPathWithinApplication(req), "path");
         } catch (Exception ex) {
-            LOGGER.warn("Exception occurred while trying to set apiMessage to : ["
-                    + ex.getClass().getSimpleName() + "].", ex);
+            LOGGER.warn("Exception occurred while trying to set apiMessage to : '{}'.",
+                    ex.getClass().getSimpleName(), ex);
         }
     }
 
@@ -125,11 +123,20 @@ public class JustAdvice {
         return prepareInternalServerException(ex, justAccessDeniedAPIException, HttpStatus.UNAUTHORIZED);
     }
 
-    @ExceptionHandler(JustAPIException.class)
+    @ExceptionHandler({JustAPIException.class})
     @ResponseBody
     public ResponseEntity<JustAPIException> handleJustAPIException(
             HttpServletRequest req, JustAPIException ex) {
-        updateAPILocalizedMessage(ex);
+        updateAPILocalizedMessage(ex, ex.getClass().getName(), ex.getApiMessage(), ex.getApiMessageArgs());
+        setPath(req, ex);
+        return new ResponseEntity<>(ex, HttpStatus.valueOf(ex.getHttpStatus()));
+    }
+
+    @ExceptionHandler({JustAPICheckedException.class})
+    @ResponseBody
+    public ResponseEntity<JustAPICheckedException> handleJustAPICheckedException(
+            HttpServletRequest req, JustAPICheckedException ex) {
+        updateAPILocalizedMessage(ex, ex.getClass().getName(), ex.getApiMessage(), ex.getApiMessageArgs());
         setPath(req, ex);
         return new ResponseEntity<>(ex, HttpStatus.valueOf(ex.getHttpStatus()));
     }
@@ -141,8 +148,6 @@ public class JustAdvice {
         JustUnknownAPIException justUnknownAPIException = new JustUnknownAPIException(
                 ex.getClass().getSimpleName() + " : " + ex.getMessage());
         setPath(req, justUnknownAPIException);
-        ResponseEntity<JustAPIException> internalServerException = prepareInternalServerException(ex,
-                justUnknownAPIException, HttpStatus.INTERNAL_SERVER_ERROR);
-        return internalServerException;
+        return prepareInternalServerException(ex, justUnknownAPIException, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

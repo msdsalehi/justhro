@@ -19,7 +19,6 @@ package io.justhro.client.decoder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.Response;
 import feign.codec.ErrorDecoder;
-import io.justhro.core.exception.JustAPIException;
 import io.justhro.core.exception.JustErrorDecoderException;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -42,10 +41,10 @@ public class JustErrorDecoder implements ErrorDecoder {
             Map errorFields = objectMapper.readValue(responseString, Map.class);
             String justExceptionClassName = errorFields.get("exceptionClassName").toString();
             Class<?> clazz = Class.forName(justExceptionClassName);
-            return (JustAPIException) objectMapper.readValue(responseString, clazz);
+            return clazz.asSubclass(Exception.class).cast(objectMapper.readValue(responseString, clazz));
         } catch (Exception ex) {
-            LOGGER.error("Error while trying to make JustAPIException. for [" +
-                    methodKey + "] service. received response: " + response, ex);
+            LOGGER.error("Error while trying to make JustAPIException. for '{}' service. received response: {}",
+                    methodKey, response, ex);
             throw new JustErrorDecoderException(ex.getMessage(), ex, response.status());
         }
     }
