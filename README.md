@@ -52,7 +52,7 @@ Following facts have been tried to be met by Justhro to make the whole process o
 
 *   Service API must contain feign client Interface for each published controller.
 *   Feign Interface methods must use the “_throws_” keyword to represent their possible error conditions.
-*   Exception types need to have “_httpStatus_”, “_code_”, “_serviceKey_”, “localized_Message_” and “_causes_” properties which have to be provided by JustAPIException.
+*   Exception types need to have “_httpStatus_”, “_code_”, “_path_”, “api_Message_”, “_causes_” and "_timestamp_" properties which have to be provided by JustAPIException.
 
 
 ## Developer of the client must not generate boilerplate code
@@ -102,3 +102,8 @@ JustErrorDecoder has to deserialize error responses which are in the form of JSO
 2. Add SERVICE_NAME-api dependency to your POM file as a dependency. This way you do not have to create the service’s feign client and will simply inject it to your code. Also this will include service’s specific exception classes so that you will be able to catch them in your code when you call feign methods. 
 
 Just Decoder will automatically construct all the subtypes of JustAPIException available in the “service API” library at client service startup. This way it throws a specific exception type for each error code received from the server. So you won’t write any ErrorDecoder.
+
+
+# 5 Advance topics
+## 5-1 Internationalization
+To enable localized messages for “apiMessage” property, put “errors.properties” message bundle in the “resources” folder of the service application. You may support different languages by adding more bundles having “_lang” postfix in file name. For instance, to support French, the bundle name will be “errors_fr.properties”.

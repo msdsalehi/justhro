@@ -22,6 +22,7 @@ import io.justhro.core.exception.JustAPIException;
 import io.justhro.core.exception.JustAccessDeniedAPIException;
 import io.justhro.core.exception.JustBadRequestAPIException;
 import io.justhro.core.exception.JustUnknownAPIException;
+import io.justhro.core.util.ReflectionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.util.UrlPathHelper;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -46,24 +48,23 @@ public class JustAdvice {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(JustAdvice.class);
     private static final ObjectMapper MAPPER = new ObjectMapper();
+    public static final UrlPathHelper URL_PATH_HELPER = new UrlPathHelper();
 
     @Autowired
     private MessageSource errorMessages;
 
     private void updateAPILocalizedMessage(JustAPIException instance) {
         try {
-            String localizedMessage = errorMessages.getMessage(instance.getClass().getName(),
-                    instance.getLocalizedMessageArgs(), instance.getLocalizedMessage(), LocaleContextHolder.getLocale());
-            Field detailMessageField = JustAPIException.class.getDeclaredField("detailMessage");
-            detailMessageField.setAccessible(true);
-            detailMessageField.set(instance, localizedMessage);
+            String apiMessage = errorMessages.getMessage(instance.getClass().getName(),
+                    instance.getApiMessageArgs(), instance.getApiMessage(), LocaleContextHolder.getLocale());
+            ReflectionUtil.setFieldValue(instance, apiMessage, "apiMessage");
         } catch (Exception ex) {
-            LOGGER.warn("Exception occurred while trying to set localizedMessage to : ["
+            LOGGER.warn("Exception occurred while trying to set apiMessage to : ["
                     + ex.getClass().getSimpleName() + "].", ex);
         }
     }
 
-    private ResponseEntity<JustAPIException> prepareInternalAPIException(
+    private ResponseEntity<JustAPIException> prepareInternalServerException(
             Throwable ex, JustAPIException instance, HttpStatus status) {
         updateAPILocalizedMessage(instance);
         try {
@@ -75,13 +76,23 @@ public class JustAdvice {
         return new ResponseEntity<>(instance, status);
     }
 
+    private void setPath(HttpServletRequest req, JustAPIException justAPIException) {
+        try {
+            ReflectionUtil.setFieldValue(justAPIException, URL_PATH_HELPER.getPathWithinApplication(req), "path");
+        } catch (Exception ex) {
+            LOGGER.warn("Exception occurred while trying to set apiMessage to : ["
+                    + ex.getClass().getSimpleName() + "].", ex);
+        }
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseBody
     public ResponseEntity<JustAPIException> handleMethodArgumentNotValidException(
             HttpServletRequest req, MethodArgumentNotValidException ex) {
         JustBadRequestAPIException justBadRequestAPIException = new JustBadRequestAPIException(
                 "MethodArgumentNotValidException : " + ex.getMessage());
-        return prepareInternalAPIException(ex, justBadRequestAPIException, HttpStatus.BAD_REQUEST);
+        setPath(req, justBadRequestAPIException);
+        return prepareInternalServerException(ex, justBadRequestAPIException, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
@@ -90,7 +101,8 @@ public class JustAdvice {
             HttpServletRequest req, HttpMessageNotReadableException ex) {
         JustBadRequestAPIException justBadRequestAPIException = new JustBadRequestAPIException(
                 "HttpMessageNotReadableException : " + ex.getMessage());
-        return prepareInternalAPIException(ex, justBadRequestAPIException, HttpStatus.BAD_REQUEST);
+        setPath(req, justBadRequestAPIException);
+        return prepareInternalServerException(ex, justBadRequestAPIException, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(ServletException.class)
@@ -99,7 +111,8 @@ public class JustAdvice {
             HttpServletRequest req, HttpMessageNotReadableException ex) {
         JustBadRequestAPIException justBadRequestAPIException = new JustBadRequestAPIException(
                 "HttpMessageNotReadableException : " + ex.getMessage());
-        return prepareInternalAPIException(ex, justBadRequestAPIException, HttpStatus.BAD_REQUEST);
+        setPath(req, justBadRequestAPIException);
+        return prepareInternalServerException(ex, justBadRequestAPIException, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(AccessDeniedException.class)
@@ -108,7 +121,8 @@ public class JustAdvice {
             HttpServletRequest req, AccessDeniedException ex) {
         JustAccessDeniedAPIException justAccessDeniedAPIException = new JustAccessDeniedAPIException(
                 "AccessDeniedException : " + ex.getMessage());
-        return prepareInternalAPIException(ex, justAccessDeniedAPIException, HttpStatus.UNAUTHORIZED);
+        setPath(req, justAccessDeniedAPIException);
+        return prepareInternalServerException(ex, justAccessDeniedAPIException, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(JustAPIException.class)
@@ -116,15 +130,19 @@ public class JustAdvice {
     public ResponseEntity<JustAPIException> handleJustAPIException(
             HttpServletRequest req, JustAPIException ex) {
         updateAPILocalizedMessage(ex);
+        setPath(req, ex);
         return new ResponseEntity<>(ex, HttpStatus.valueOf(ex.getHttpStatus()));
     }
 
     @ExceptionHandler(Throwable.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
-    public ResponseEntity<JustAPIException> handleThrowable(Throwable ex) {
+    public ResponseEntity<JustAPIException> handleThrowable(HttpServletRequest req, Throwable ex) {
         JustUnknownAPIException justUnknownAPIException = new JustUnknownAPIException(
                 ex.getClass().getSimpleName() + " : " + ex.getMessage());
-        return prepareInternalAPIException(ex, justUnknownAPIException, HttpStatus.UNAUTHORIZED);
+        setPath(req, justUnknownAPIException);
+        ResponseEntity<JustAPIException> internalServerException = prepareInternalServerException(ex,
+                justUnknownAPIException, HttpStatus.INTERNAL_SERVER_ERROR);
+        return internalServerException;
     }
 }

@@ -1,7 +1,7 @@
-package org.justhro.sample.client.web.rest;
+package io.justhro.sample.client.web.rest;
 
-import org.justhro.sample.service.api.SampleRemote;
-import org.justhro.sample.service.api.exception.WrongNameException;
+import io.justhro.sample.service.api.SampleRemote;
+import io.justhro.sample.service.api.exception.WrongNameException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;

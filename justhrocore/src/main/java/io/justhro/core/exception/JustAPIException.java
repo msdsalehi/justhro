@@ -18,17 +18,20 @@ package io.justhro.core.exception;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
-@JsonIgnoreProperties(value = {"cause", "stackTrace", "suppressed", "apiMessageArgs"},
+@JsonIgnoreProperties(value = {"cause", "stackTrace", "suppressed", "apiMessageArgs", "localizedMessage"},
         ignoreUnknown = true)
 public abstract class JustAPIException extends RuntimeException {
 
     static final String INTERNAL_CODE_PREFIX = "*-";
-    private Object[] localizedMessageArgs;
-    protected String serviceKey;
+    private Object[] apiMessageArgs;
+    protected String apiMessage;
+    protected String path;
     private List<String> causes;
+    private Long timestamp = Instant.now().toEpochMilli();
 
     public JustAPIException() {
     }
@@ -57,16 +60,24 @@ public abstract class JustAPIException extends RuntimeException {
 
     public abstract String getCode();
 
-    public Object[] getLocalizedMessageArgs() {
-        return localizedMessageArgs;
+    public final String getExceptionClassName() {
+        return this.getClass().getName();
     }
 
-    public void setLocalizedMessageArgs(Object... localizedMessageArgs) {
-        this.localizedMessageArgs = localizedMessageArgs;
+    public Object[] getApiMessageArgs() {
+        return apiMessageArgs;
     }
 
-    public String getServiceKey() {
-        return serviceKey;
+    public void setApiMessageArgs(Object... apiMessageArgs) {
+        this.apiMessageArgs = apiMessageArgs;
+    }
+
+    public String getApiMessage() {
+        return apiMessage;
+    }
+
+    public String getPath() {
+        return path;
     }
 
     public List<String> getCauses() {
@@ -84,7 +95,7 @@ public abstract class JustAPIException extends RuntimeException {
         this.causes.add(cause);
     }
 
-    public final String getExceptionClassName() {
-        return this.getClass().getName();
+    public Long getTimestamp() {
+        return timestamp;
     }
 }

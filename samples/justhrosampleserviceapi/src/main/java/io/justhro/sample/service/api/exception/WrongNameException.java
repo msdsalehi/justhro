@@ -1,6 +1,6 @@
-package org.justhro.sample.service.api.exception;
+package io.justhro.sample.service.api.exception;
 
-import org.justhro.core.exception.JustAPIException;
+import io.justhro.core.exception.JustAPIException;
 
 public class WrongNameException extends JustAPIException {
 

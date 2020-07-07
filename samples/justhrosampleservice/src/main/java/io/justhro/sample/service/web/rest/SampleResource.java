@@ -1,7 +1,7 @@
-package org.justhro.sample.service.web.rest;
+package io.justhro.sample.service.web.rest;
 
-import org.justhro.sample.service.api.SampleRemote;
-import org.justhro.sample.service.api.exception.WrongNameException;
+import io.justhro.sample.service.api.SampleRemote;
+import io.justhro.sample.service.api.exception.WrongNameException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

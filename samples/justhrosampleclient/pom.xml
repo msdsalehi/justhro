@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.justhro.sample</groupId>
+    <groupId>io.justhro.sample</groupId>
     <artifactId>sample-client</artifactId>
     <version>1.0.0</version>
 
@@ -36,7 +36,7 @@
             <version>2.2.3.RELEASE</version>
         </dependency>
         <dependency>
-            <groupId>org.justhro.sample</groupId>
+            <groupId>io.justhro.sample</groupId>
             <artifactId>sample-service-api</artifactId>
             <version>1.0.0</version>
         </dependency>
@@ -46,7 +46,7 @@
             <version>2.2.3.RELEASE</version>
         </dependency>
         <dependency>
-            <groupId>org.justhro</groupId>
+            <groupId>io.justhro</groupId>
             <artifactId>client-spring-boot-starter</artifactId>
             <version>1.0.0</version>
         </dependency>

@@ -1,6 +1,6 @@
-package org.justhro.sample.service.api;
+package io.justhro.sample.service.api;
 
-import org.justhro.sample.service.api.exception.WrongNameException;
+import io.justhro.sample.service.api.exception.WrongNameException;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

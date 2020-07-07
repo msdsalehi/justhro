@@ -27,7 +27,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.io.StringWriter;
-import java.lang.reflect.Field;
 import java.util.Map;
 
 public class JustErrorDecoder implements ErrorDecoder {
@@ -43,24 +42,11 @@ public class JustErrorDecoder implements ErrorDecoder {
             Map errorFields = objectMapper.readValue(responseString, Map.class);
             String justExceptionClassName = errorFields.get("exceptionClassName").toString();
             Class<?> clazz = Class.forName(justExceptionClassName);
-            JustAPIException justAPIException = (JustAPIException) objectMapper.readValue(responseString, clazz);
-            setServiceKey(methodKey, justAPIException);
-            return justAPIException;
+            return (JustAPIException) objectMapper.readValue(responseString, clazz);
         } catch (Exception ex) {
             LOGGER.error("Error while trying to make JustAPIException. for [" +
                     methodKey + "] service. received response: " + response, ex);
             throw new JustErrorDecoderException(ex.getMessage(), ex, response.status());
-        }
-    }
-
-    private void setServiceKey(String methodKey, JustAPIException justAPIException) {
-        try {
-            Field apiMessageField = JustAPIException.class.getDeclaredField("serviceKey");
-            apiMessageField.setAccessible(true);
-            apiMessageField.set(justAPIException, methodKey);
-        } catch (Exception ex) {
-            LOGGER.error("Error while trying to set apiMessage field of JustAPIException with concrete type: [" +
-                    justAPIException.getExceptionClassName() + "]", ex);
         }
     }
 }
