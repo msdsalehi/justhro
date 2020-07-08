@@ -10,7 +10,7 @@ Most microservice environments have practiced difficulties in inter service comm
 
 Developers in a microservice environment usually find this as an annoying part of their tasks. As a developer, I prefer to stay focused on taking care of the business logic, corner cases and checking exceptional situations which may happen during compile or run time. We never find it annoying to catch an exception which is probable to be thrown, or on the other side we always throw relevant exceptions easily while implementing a service.
 
-But the reason for these difficulties is not lacking technical solutions to the problem in our environment, but it’s the lack of clarity and presence of different aspects of this specific area which a developer has to deal with. It is mainly the lack of a simple and clear operational guideline to producing and handling exceptions.
+But the reason for these difficulties is not lacking technical solutions to the problem in our environment. It’s the lack of clarity and presence of different aspects of this specific area which a developer has to deal with. It is mainly the lack of a simple and clear operational guideline to producing and handling exceptions.
 
 In this short document I try to represent a solution for those who use Java, Spring Boot and Feign to manage their synchronized restful inter service communications. I tried to hide some difficulties from the service developer point of view. I named the project as Justhro which stands for `_Just Throw_`.
 
@@ -57,7 +57,7 @@ Following facts have been tried to be met by Justhro to make the whole process o
 
 ## Developer of the client must not generate boilerplate code
 
-JustErrorDecoder has to deserialize error responses which are in the form of JSON, to correct JustException subtypes and throw them. So that client can use java catch expressions to handle them.
+JustErrorDecoder has to deserialize error responses which are in the form of JSON, to correct JustAPIException subtypes and throw them. So that client can use java “catch” expressions to handle them.
 
 
 # 4 Implementation
@@ -67,15 +67,15 @@ JustErrorDecoder has to deserialize error responses which are in the form of JSO
 
 
 
-1. Add following dependency to include JustException and creation of JustAdvice component:
+1. Add following dependency to include JustAPIException and creation of JustAdvice component:
     
         <dependency>
             <groupId>io.justhro</groupId>
             <artifactId>service-spring-boot-starter</artifactId>
             <version>1.0.0</version>
         </dependency>
-2. Create business exception classes and extend JustException class. You will be forced to implement abstract methods to provide specific data about each error condition which the exception class is related to.
-3. Throw your business exceptions where ever you like and let them be thrown from your controller tier
+2. Create business exception classes and extend JustAPIException class. You will be forced to implement abstract methods to provide specific data about each error condition which the exception class is related to.
+3. Throw your business exceptions where ever you like and let them be thrown from your controller tier.
 4. Create SERVICE_NAME-api project which has “jar” as it’s packaging tag in it’s POM file. Put Feign clients, DTOs used by your service interfaces and also all business exceptions (which inherit JustAPIException) in the jar file. 
     Also you need to put the following dependency in SERVICE_NAME-api’s pom file:
 
