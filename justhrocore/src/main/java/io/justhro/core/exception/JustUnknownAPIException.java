@@ -26,12 +26,16 @@ public class JustUnknownAPIException extends JustAPIException {
     private int httpStatus;
     private String code;
 
-    public JustUnknownAPIException(String apiMessage) {
+    public JustUnknownAPIException() {
+    }
+
+    public JustUnknownAPIException(String apiMessage, JustAPIException rootCause) {
+        super(rootCause);
         this.apiMessage = apiMessage;
     }
 
-    public JustUnknownAPIException(String message, String apiMessage) {
-        super(message);
+    public JustUnknownAPIException(String message, String apiMessage, JustAPIException rootCause) {
+        super(message, rootCause);
         this.apiMessage = apiMessage;
     }
 

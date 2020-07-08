@@ -17,6 +17,9 @@
 package io.justhro.core.exception;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import io.justhro.core.util.ReflectionUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -26,34 +29,41 @@ import java.util.List;
         ignoreUnknown = true)
 public abstract class JustAPICheckedException extends Exception {
 
-    static final String INTERNAL_CODE_PREFIX = "*-";
+    private final static Logger LOGGER = LoggerFactory.getLogger(JustAPIException.class);
+    static final String INTERNAL_CODE_PREFIX = "**-";
     private Object[] apiMessageArgs;
     protected String apiMessage;
     protected String path;
     private List<String> causes;
     private Long timestamp = Instant.now().toEpochMilli();
+    private String rootCauseCode;
+
+    public JustAPICheckedException(String message, Throwable cause, JustAPICheckedException rootCause) {
+        super(message, cause);
+        try {
+            if (rootCause != null) {
+                String rootCauseCode = rootCause.getRootCauseCode();
+                ReflectionUtil.setFieldValue(this, rootCauseCode == null ? rootCause.getCode() : rootCauseCode,
+                        "rootCauseCode");
+            }
+        } catch (Exception ex) {
+            LOGGER.error("Error while trying to set rootCause.", ex);
+        }
+    }
+
+    public JustAPICheckedException(Throwable cause, JustAPICheckedException rootCause) {
+        this(null, cause, rootCause);
+    }
+
+    public JustAPICheckedException(String message, JustAPICheckedException rootCause) {
+        this(message, null, rootCause);
+    }
+
+    public JustAPICheckedException(JustAPICheckedException rootCause) {
+        this(null, null, rootCause);
+    }
 
     public JustAPICheckedException() {
-    }
-
-    public JustAPICheckedException(String message) {
-        super(message);
-    }
-
-    public JustAPICheckedException(String message, String localizedMessage) {
-        super(message);
-    }
-
-    public JustAPICheckedException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public JustAPICheckedException(Throwable cause) {
-        super(cause);
-    }
-
-    public JustAPICheckedException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
     }
 
     public abstract int getHttpStatus();
@@ -97,5 +107,9 @@ public abstract class JustAPICheckedException extends Exception {
 
     public Long getTimestamp() {
         return timestamp;
+    }
+
+    public String getRootCauseCode() {
+        return rootCauseCode;
     }
 }

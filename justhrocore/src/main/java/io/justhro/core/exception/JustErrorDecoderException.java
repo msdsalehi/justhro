@@ -21,20 +21,22 @@ public class JustErrorDecoderException extends JustAPIException {
     private int httpStatus;
 
     public JustErrorDecoderException(String message, Throwable cause, int httpStatus) {
-        super(message, cause);
+        super(message, cause, null);
         this.httpStatus = httpStatus;
     }
 
     public JustErrorDecoderException(String message, int httpStatus) {
-        super(message);
+        super(message, null);
         this.httpStatus = httpStatus;
     }
 
     public JustErrorDecoderException(int httpStatus) {
+        super(null);
         this.httpStatus = httpStatus;
     }
 
     public JustErrorDecoderException() {
+        super(null);
     }
 
     @Override

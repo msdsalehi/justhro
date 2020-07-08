@@ -23,15 +23,15 @@ import java.lang.reflect.Field;
 
 public final class ReflectionUtil {
 
-    public static void setFieldValue(Exception instance, String localizedMessage, String apiMessage)
+    public static void setFieldValue(Exception instance, String fieldValue, String fieldName)
             throws NoSuchFieldException, IllegalAccessException {
         Field apiMessageField;
         if (instance instanceof JustAPICheckedException) {
-            apiMessageField = JustAPICheckedException.class.getDeclaredField(apiMessage);
+            apiMessageField = JustAPICheckedException.class.getDeclaredField(fieldName);
         } else {
-            apiMessageField = JustAPIException.class.getDeclaredField(apiMessage);
+            apiMessageField = JustAPIException.class.getDeclaredField(fieldName);
         }
         apiMessageField.setAccessible(true);
-        apiMessageField.set(instance, localizedMessage);
+        apiMessageField.set(instance, fieldValue);
     }
 }

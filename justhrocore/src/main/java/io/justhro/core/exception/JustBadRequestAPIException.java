@@ -23,25 +23,20 @@ public class JustBadRequestAPIException extends JustAPIException {
     public JustBadRequestAPIException() {
     }
 
-    public JustBadRequestAPIException(String message) {
-        super(message);
+    public JustBadRequestAPIException(JustAPIException rootCause) {
+        super(rootCause);
     }
 
-    public JustBadRequestAPIException(String message, String localizedMessage) {
-        super(message, localizedMessage);
+    public JustBadRequestAPIException(String message, JustAPIException rootCause) {
+        super(message, rootCause);
     }
 
-    public JustBadRequestAPIException(String message, Throwable cause) {
-        super(message, cause);
+    public JustBadRequestAPIException(String message, Throwable cause, JustAPIException rootCause) {
+        super(message, cause, rootCause);
     }
 
-    public JustBadRequestAPIException(Throwable cause) {
-        super(cause);
-    }
-
-    public JustBadRequestAPIException(String message, Throwable cause,
-                                      boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
+    public JustBadRequestAPIException(Throwable cause, JustAPIException rootCause) {
+        super(cause, rootCause);
     }
 
     @Override

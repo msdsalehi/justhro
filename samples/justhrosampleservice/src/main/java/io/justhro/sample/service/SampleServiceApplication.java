@@ -10,8 +10,5 @@ public class SampleServiceApplication {
     public static void main(String[] args) {
         ConfigurableApplicationContext context = new SpringApplicationBuilder(SampleServiceApplication.class)
                 .run(args);
-//        System.out.println("\n-----------------");
-//        System.out.println(Arrays.toString(context.getBeanDefinitionNames()));
-//        System.out.println("-----------------");
     }
 }

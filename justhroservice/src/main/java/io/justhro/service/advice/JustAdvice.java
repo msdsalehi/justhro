@@ -57,7 +57,8 @@ public class JustAdvice {
             ReflectionUtil.setFieldValue(instance, apiMessage, "apiMessage");
         } catch (Exception ex) {
             LOGGER.warn("Exception occurred while trying to set apiMessage to : '{}'.",
-                    ex.getClass().getSimpleName(), ex);
+                    ex.getClass().getSimpleName());
+            LOGGER.warn(ex.getMessage(), ex);
         }
     }
 
@@ -69,7 +70,8 @@ public class JustAdvice {
             instance.addCause(MAPPER.writeValueAsString(ex));
         } catch (JsonProcessingException e) {
             LOGGER.warn("Exception occurred while trying to serialize '{}' for setting in JustAPIException " +
-                    "cause property.", ex.getClass().getSimpleName(), e);
+                    "cause property.", ex.getClass().getSimpleName());
+            LOGGER.warn(e.getMessage(), e);
         }
         return new ResponseEntity<>(instance, status);
     }
@@ -79,7 +81,8 @@ public class JustAdvice {
             ReflectionUtil.setFieldValue(justAPIException, URL_PATH_HELPER.getPathWithinApplication(req), "path");
         } catch (Exception ex) {
             LOGGER.warn("Exception occurred while trying to set apiMessage to : '{}'.",
-                    ex.getClass().getSimpleName(), ex);
+                    ex.getClass().getSimpleName());
+            LOGGER.warn(ex.getMessage(), ex);
         }
     }
 
@@ -88,7 +91,7 @@ public class JustAdvice {
     public ResponseEntity<JustAPIException> handleMethodArgumentNotValidException(
             HttpServletRequest req, MethodArgumentNotValidException ex) {
         JustBadRequestAPIException justBadRequestAPIException = new JustBadRequestAPIException(
-                "MethodArgumentNotValidException : " + ex.getMessage());
+                "MethodArgumentNotValidException : " + ex.getMessage(), null);
         setPath(req, justBadRequestAPIException);
         return prepareInternalServerException(ex, justBadRequestAPIException, HttpStatus.BAD_REQUEST);
     }
@@ -98,7 +101,7 @@ public class JustAdvice {
     public ResponseEntity<JustAPIException> handleHttpMessageNotReadableException(
             HttpServletRequest req, HttpMessageNotReadableException ex) {
         JustBadRequestAPIException justBadRequestAPIException = new JustBadRequestAPIException(
-                "HttpMessageNotReadableException : " + ex.getMessage());
+                "HttpMessageNotReadableException : " + ex.getMessage(), null);
         setPath(req, justBadRequestAPIException);
         return prepareInternalServerException(ex, justBadRequestAPIException, HttpStatus.BAD_REQUEST);
     }
@@ -108,7 +111,7 @@ public class JustAdvice {
     public ResponseEntity<JustAPIException> handleServletRequestBindingException(
             HttpServletRequest req, HttpMessageNotReadableException ex) {
         JustBadRequestAPIException justBadRequestAPIException = new JustBadRequestAPIException(
-                "HttpMessageNotReadableException : " + ex.getMessage());
+                "HttpMessageNotReadableException : " + ex.getMessage(), null);
         setPath(req, justBadRequestAPIException);
         return prepareInternalServerException(ex, justBadRequestAPIException, HttpStatus.BAD_REQUEST);
     }
@@ -118,7 +121,7 @@ public class JustAdvice {
     public ResponseEntity<JustAPIException> handleAccessDeniedException(
             HttpServletRequest req, AccessDeniedException ex) {
         JustAccessDeniedAPIException justAccessDeniedAPIException = new JustAccessDeniedAPIException(
-                "AccessDeniedException : " + ex.getMessage());
+                "AccessDeniedException : " + ex.getMessage(), null);
         setPath(req, justAccessDeniedAPIException);
         return prepareInternalServerException(ex, justAccessDeniedAPIException, HttpStatus.UNAUTHORIZED);
     }
@@ -146,7 +149,7 @@ public class JustAdvice {
     @ResponseBody
     public ResponseEntity<JustAPIException> handleThrowable(HttpServletRequest req, Throwable ex) {
         JustUnknownAPIException justUnknownAPIException = new JustUnknownAPIException(
-                ex.getClass().getSimpleName() + " : " + ex.getMessage());
+                ex.getClass().getSimpleName() + " : " + ex.getMessage(), null);
         setPath(req, justUnknownAPIException);
         return prepareInternalServerException(ex, justUnknownAPIException, HttpStatus.INTERNAL_SERVER_ERROR);
     }

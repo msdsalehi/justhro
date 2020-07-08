@@ -23,25 +23,20 @@ public class JustAccessDeniedAPIException extends JustAPIException {
     public JustAccessDeniedAPIException() {
     }
 
-    public JustAccessDeniedAPIException(String message) {
-        super(message);
+    public JustAccessDeniedAPIException(JustAPIException rootCause) {
+        super(rootCause);
     }
 
-    public JustAccessDeniedAPIException(String message, String localizedMessage) {
-        super(message, localizedMessage);
+    public JustAccessDeniedAPIException(String message, JustAPIException rootCause) {
+        super(message, rootCause);
     }
 
-    public JustAccessDeniedAPIException(String message, Throwable cause) {
-        super(message, cause);
+    public JustAccessDeniedAPIException(String message, Throwable cause, JustAPIException rootCause) {
+        super(message, cause, rootCause);
     }
 
-    public JustAccessDeniedAPIException(Throwable cause) {
-        super(cause);
-    }
-
-    public JustAccessDeniedAPIException(String message, Throwable cause,
-                                        boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
+    public JustAccessDeniedAPIException(Throwable cause, JustAPIException rootCause) {
+        super(cause, rootCause);
     }
 
     @Override

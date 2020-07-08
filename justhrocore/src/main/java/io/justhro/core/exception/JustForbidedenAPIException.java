@@ -23,25 +23,20 @@ public class JustForbidedenAPIException extends JustAPIException {
     public JustForbidedenAPIException() {
     }
 
-    public JustForbidedenAPIException(String message) {
-        super(message);
+    public JustForbidedenAPIException(JustAPIException rootCause) {
+        super(rootCause);
     }
 
-    public JustForbidedenAPIException(String message, String localizedMessage) {
-        super(message, localizedMessage);
+    public JustForbidedenAPIException(String message, JustAPIException rootCause) {
+        super(message, rootCause);
     }
 
-    public JustForbidedenAPIException(String message, Throwable cause) {
-        super(message, cause);
+    public JustForbidedenAPIException(String message, Throwable cause, JustAPIException rootCause) {
+        super(message, cause, rootCause);
     }
 
-    public JustForbidedenAPIException(Throwable cause) {
-        super(cause);
-    }
-
-    public JustForbidedenAPIException(String message, Throwable cause,
-                                      boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
+    public JustForbidedenAPIException(Throwable cause, JustAPIException rootCause) {
+        super(cause, rootCause);
     }
 
     @Override

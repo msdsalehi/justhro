@@ -4,27 +4,23 @@ import io.justhro.core.exception.JustAPIException;
 
 public class WrongNameException extends JustAPIException {
 
+    public WrongNameException(String message, Throwable cause, JustAPIException rootCause) {
+        super(message, cause, rootCause);
+    }
+
+    public WrongNameException(Throwable cause, JustAPIException rootCause) {
+        super(cause, rootCause);
+    }
+
+    public WrongNameException(String message, JustAPIException rootCause) {
+        super(message, rootCause);
+    }
+
+    public WrongNameException(JustAPIException rootCause) {
+        super(rootCause);
+    }
+
     public WrongNameException() {
-    }
-
-    public WrongNameException(String message) {
-        super(message);
-    }
-
-    public WrongNameException(String message, String localizedMessage) {
-        super(message, localizedMessage);
-    }
-
-    public WrongNameException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public WrongNameException(Throwable cause) {
-        super(cause);
-    }
-
-    public WrongNameException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
     }
 
     @Override

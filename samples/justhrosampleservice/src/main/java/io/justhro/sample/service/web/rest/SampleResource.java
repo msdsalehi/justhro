@@ -12,10 +12,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/samples/hello")
 public class SampleResource implements SampleRemote {
 
+    @Override
     @GetMapping("/{name}")
     public ResponseEntity<String> sayHello(@PathVariable("name") String name) {
         if (name == null || name.isEmpty() || name.equalsIgnoreCase("ali")){
-            WrongNameException wrongNameException = new WrongNameException("messsage");
+            WrongNameException wrongNameException = new WrongNameException("messsage", null);
             wrongNameException.addCause("cause 1");
             wrongNameException.addCause("cause 2");
             throw wrongNameException;

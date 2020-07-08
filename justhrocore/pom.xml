@@ -20,6 +20,12 @@
             <version>5.2.7.RELEASE</version>
             <optional>true</optional>
         </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.30</version>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 
     <properties>
