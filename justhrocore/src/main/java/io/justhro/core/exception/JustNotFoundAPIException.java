@@ -18,34 +18,34 @@ package io.justhro.core.exception;
 
 import org.springframework.http.HttpStatus;
 
-public class JustBadRequestAPIException extends JustAPIException {
+public class JustNotFoundAPIException extends JustAPIException {
 
-    public JustBadRequestAPIException() {
+    public JustNotFoundAPIException() {
     }
 
-    public JustBadRequestAPIException(JustAPIException rootCause) {
+    public JustNotFoundAPIException(JustAPIException rootCause) {
         super(rootCause);
     }
 
-    public JustBadRequestAPIException(String message, JustAPIException rootCause) {
+    public JustNotFoundAPIException(String message, JustAPIException rootCause) {
         super(message, rootCause);
     }
 
-    public JustBadRequestAPIException(String message, Throwable cause, JustAPIException rootCause) {
+    public JustNotFoundAPIException(String message, Throwable cause, JustAPIException rootCause) {
         super(message, cause, rootCause);
     }
 
-    public JustBadRequestAPIException(Throwable cause, JustAPIException rootCause) {
+    public JustNotFoundAPIException(Throwable cause, JustAPIException rootCause) {
         super(cause, rootCause);
     }
 
     @Override
     public int getStatus() {
-        return HttpStatus.BAD_REQUEST.value();
+        return HttpStatus.NOT_FOUND.value();
     }
 
     @Override
     public String getCode() {
-        return INTERNAL_CODE_PREFIX + HttpStatus.BAD_REQUEST.value();
+        return INTERNAL_CODE_PREFIX + HttpStatus.NOT_FOUND.value();
     }
 }

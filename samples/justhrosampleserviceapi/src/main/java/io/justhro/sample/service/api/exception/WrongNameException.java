@@ -24,7 +24,7 @@ public class WrongNameException extends JustAPIException {
     }
 
     @Override
-    public int getHttpStatus() {
+    public int getStatus() {
         return 400;
     }
 

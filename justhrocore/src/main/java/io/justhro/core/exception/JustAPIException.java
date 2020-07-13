@@ -1,16 +1,16 @@
 /**
  * Copyright (C) 2020  Masoud Salehi Alamdari
- *
+ * <p>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
@@ -25,15 +25,17 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
-@JsonIgnoreProperties(value = {"cause", "stackTrace", "suppressed", "apiMessageArgs", "localizedMessage"},
+@JsonIgnoreProperties(value = {"cause", "stackTrace", "suppressed", "detailArgs", "localizedMessage", "message"},
         ignoreUnknown = true)
-public abstract class JustAPIException extends RuntimeException {
+public abstract class JustAPIException extends RuntimeException implements JustAPIExceptionDetailsProvider {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(JustAPIException.class);
     static final String INTERNAL_CODE_PREFIX = "*-";
-    private Object[] apiMessageArgs;
-    protected String apiMessage;
-    protected String path;
+    protected String type;
+    protected String title;
+    private Object[] detailArgs;
+    protected String detail;
+    protected String instance;
     private List<String> causes;
     private Long timestamp = Instant.now().toEpochMilli();
     private String rootCauseCode;
@@ -66,28 +68,32 @@ public abstract class JustAPIException extends RuntimeException {
     public JustAPIException() {
     }
 
-    public abstract int getHttpStatus();
-
-    public abstract String getCode();
-
     public final String getExceptionClassName() {
         return this.getClass().getName();
     }
 
-    public Object[] getApiMessageArgs() {
-        return apiMessageArgs;
+    public String getType() {
+        return type;
     }
 
-    public void setApiMessageArgs(Object... apiMessageArgs) {
-        this.apiMessageArgs = apiMessageArgs;
+    public String getTitle() {
+        return title;
     }
 
-    public String getApiMessage() {
-        return apiMessage;
+    public Object[] getDetailArgs() {
+        return detailArgs;
     }
 
-    public String getPath() {
-        return path;
+    public void setDetailArgs(Object... detailArgs) {
+        this.detailArgs = detailArgs;
+    }
+
+    public String getDetail() {
+        return detail;
+    }
+
+    public String getInstance() {
+        return instance;
     }
 
     public List<String> getCauses() {
@@ -110,6 +116,6 @@ public abstract class JustAPIException extends RuntimeException {
     }
 
     public String getRootCauseCode() {
-        return rootCauseCode;
+        return rootCauseCode == null ? getCode() : rootCauseCode;
     }
 }

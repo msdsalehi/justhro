@@ -14,6 +14,7 @@ But the reason for these difficulties is not lacking technical solutions to the 
 
 In this short document I try to represent a solution for those who use Java, Spring Boot and Feign to manage their synchronized restful inter service communications. I tried to hide some difficulties from the service developer point of view. I named the project as Justhro which stands for `_Just Throw_`.
 
+Justhro follows https://tools.ietf.org/html/rfc7807 conventions.
 
 # 2 Key components
 
@@ -52,7 +53,7 @@ Following facts have been tried to be met by Justhro to make the whole process o
 
 *   Service API must contain feign client Interface for each published controller.
 *   Feign Interface methods must use the “_throws_” keyword to represent their possible error conditions.
-*   Exception types need to have “_httpStatus_”, “_code_”, “_path_”, “api_Message_”, “_causes_” and "_timestamp_" properties which have to be provided by JustAPIException.
+*   Exception types need to have “_status_”, “_code_”, “_instance_”, “_type_”, “_title_”, “detail_”, “_causes_” and "_timestamp_" properties which have to be provided by JustAPIException.
 
 
 ## Developer of the client must not generate boilerplate code
@@ -75,7 +76,7 @@ JustErrorDecoder has to deserialize error responses which are in the form of JSO
             <version>1.0.0</version>
         </dependency>
 2. Create business exception classes and extend JustAPIException class. You will be forced to implement abstract methods to provide specific data about each error condition which the exception class is related to.
-3. Throw your business exceptions where ever you like and let them be thrown from your controller tier.
+3. Throw your business exceptions whereever you like and let them be thrown from your controller tier.
 4. Create SERVICE_NAME-api project which has “jar” as it’s packaging tag in it’s POM file. Put Feign clients, DTOs used by your service interfaces and also all business exceptions (which inherit JustAPIException) in the jar file. 
     Also you need to put the following dependency in SERVICE_NAME-api’s pom file:
 
@@ -105,10 +106,19 @@ Just Decoder will automatically construct all the subtypes of JustAPIException a
 
 
 # 5 Advance topics
-## 5-1 Internationalization
-To enable localized messages for “apiMessage” property, put “errors.properties” message bundle in the “resources” folder of the service application. You may support different languages by adding more bundles having “_lang” postfix in file name. For instance, to support French, the bundle name will be “errors_fr.properties”.
+## 5-1 details (Optional)
+`Detail` is the error description in a human readable format. To enable localized messages for “detail” property, put “errors.properties” message bundle in the “resources/justhro/” folder of the service application. You may support different languages by adding more bundles having “_lang” postfix in file name. For instance, to support French, the bundle name will be “errors_fr.properties”.
 
-## 5-2 Checked exceptions
+## 5-2 types (Optional)
+`Type` property is a URL (in the form of http(s)://your_domain/path_to_error_page) to a human readable description page for each error type. To define types, put “types.properties” message bundle in the “resources/justhro/” folder of the service application. 
+
+If you do not provide types, Justhro will fill it with `about:blank`.
+
+## 5-3 titles (Optional)
+`Title` property is a specific title to each error type. To enable localized messages for “title” property, put “titles.properties” message bundle in the “resources/justhro/” folder of the service application. You may support different languages by adding more bundles having “_lang” postfix in file name. For instance, to support French, the bundle name will be “titles_fr.properties”.
+
+If you do not provide titles, Justhro will fill it with default english HTTP status code description.
+
+## 5-4 Checked exceptions (Optional)
 Sometimes it is hard to find available exceptions which are possible to be thrown from a method, due to the large number of low level API invocations. Besides that, sometimes a developer decides to use checked exceptions in order to force the caller to handle the specific exceptional situation.
-
 Fortunately there is another base Exception class namely JustAPICheckedException you can extend to achieve this.
