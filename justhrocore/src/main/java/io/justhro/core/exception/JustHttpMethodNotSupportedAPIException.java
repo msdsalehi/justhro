@@ -18,34 +18,34 @@ package io.justhro.core.exception;
 
 import org.springframework.http.HttpStatus;
 
-public class JustAccessDeniedAPIException extends JustAPIException {
+public class JustHttpMethodNotSupportedAPIException extends JustAPIException {
 
-    public JustAccessDeniedAPIException() {
+    public JustHttpMethodNotSupportedAPIException() {
     }
 
-    public JustAccessDeniedAPIException(JustAPIException rootCause) {
+    public JustHttpMethodNotSupportedAPIException(JustAPIException rootCause) {
         super(rootCause);
     }
 
-    public JustAccessDeniedAPIException(String message, JustAPIException rootCause) {
+    public JustHttpMethodNotSupportedAPIException(String message, JustAPIException rootCause) {
         super(message, rootCause);
     }
 
-    public JustAccessDeniedAPIException(String message, Throwable cause, JustAPIException rootCause) {
+    public JustHttpMethodNotSupportedAPIException(String message, Throwable cause, JustAPIException rootCause) {
         super(message, cause, rootCause);
     }
 
-    public JustAccessDeniedAPIException(Throwable cause, JustAPIException rootCause) {
+    public JustHttpMethodNotSupportedAPIException(Throwable cause, JustAPIException rootCause) {
         super(cause, rootCause);
     }
 
     @Override
     public int getStatus() {
-        return HttpStatus.FORBIDDEN.value();
+        return HttpStatus.METHOD_NOT_ALLOWED.value();
     }
 
     @Override
     public String getCode() {
-        return INTERNAL_CODE_PREFIX + HttpStatus.FORBIDDEN.value();
+        return INTERNAL_CODE_PREFIX + HttpStatus.METHOD_NOT_ALLOWED.value();
     }
 }

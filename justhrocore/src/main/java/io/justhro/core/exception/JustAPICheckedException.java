@@ -40,7 +40,7 @@ public abstract class JustAPICheckedException extends Exception implements JustA
     private Long timestamp = Instant.now().toEpochMilli();
     private String rootCauseCode;
 
-    public JustAPICheckedException(String message, Throwable cause, JustAPICheckedException rootCause) {
+    public JustAPICheckedException(String message, Throwable cause, JustAPIExceptionDetailsProvider rootCause) {
         super(message, cause);
         try {
             if (rootCause != null) {
@@ -53,15 +53,15 @@ public abstract class JustAPICheckedException extends Exception implements JustA
         }
     }
 
-    public JustAPICheckedException(Throwable cause, JustAPICheckedException rootCause) {
+    public JustAPICheckedException(Throwable cause, JustAPIExceptionDetailsProvider rootCause) {
         this(null, cause, rootCause);
     }
 
-    public JustAPICheckedException(String message, JustAPICheckedException rootCause) {
+    public JustAPICheckedException(String message, JustAPIExceptionDetailsProvider rootCause) {
         this(message, null, rootCause);
     }
 
-    public JustAPICheckedException(JustAPICheckedException rootCause) {
+    public JustAPICheckedException(JustAPIExceptionDetailsProvider rootCause) {
         this(null, null, rootCause);
     }
 

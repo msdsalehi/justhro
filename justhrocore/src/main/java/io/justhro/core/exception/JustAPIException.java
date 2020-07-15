@@ -40,7 +40,7 @@ public abstract class JustAPIException extends RuntimeException implements JustA
     private Long timestamp = Instant.now().toEpochMilli();
     private String rootCauseCode;
 
-    public JustAPIException(String message, Throwable cause, JustAPIException rootCause) {
+    public JustAPIException(String message, Throwable cause, JustAPIExceptionDetailsProvider rootCause) {
         super(message, cause);
         try {
             if (rootCause != null) {
@@ -53,15 +53,15 @@ public abstract class JustAPIException extends RuntimeException implements JustA
         }
     }
 
-    public JustAPIException(Throwable cause, JustAPIException rootCause) {
+    public JustAPIException(Throwable cause, JustAPIExceptionDetailsProvider rootCause) {
         this(null, cause, rootCause);
     }
 
-    public JustAPIException(String message, JustAPIException rootCause) {
+    public JustAPIException(String message, JustAPIExceptionDetailsProvider rootCause) {
         this(message, null, rootCause);
     }
 
-    public JustAPIException(JustAPIException rootCause) {
+    public JustAPIException(JustAPIExceptionDetailsProvider rootCause) {
         this(null, null, rootCause);
     }
 

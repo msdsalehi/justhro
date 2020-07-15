@@ -30,6 +30,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -187,6 +189,32 @@ public class JustAdvice {
         setGeneralExceptionAsCause(ex, justAccessDeniedAPIException);
         return new ResponseEntity<>(justAccessDeniedAPIException,
                 HttpStatus.valueOf(justAccessDeniedAPIException.getStatus()));
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    @ResponseBody
+    public ResponseEntity<JustAPIException> handleHttpMethodNotSupportedException(
+            HttpServletRequest req, HttpRequestMethodNotSupportedException ex) {
+        LOGGER.error(ex.getMessage(), ex);
+        JustHttpMethodNotSupportedAPIException methodNotSupportedException = new JustHttpMethodNotSupportedAPIException(
+                "AccessDeniedException : " + ex.getMessage(), null);
+        updateProperties(req, methodNotSupportedException);
+        setGeneralExceptionAsCause(ex, methodNotSupportedException);
+        return new ResponseEntity<>(methodNotSupportedException,
+                HttpStatus.valueOf(methodNotSupportedException.getStatus()));
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    @ResponseBody
+    public ResponseEntity<JustAPIException> handleBadCredentialsException(
+            HttpServletRequest req, BadCredentialsException ex) {
+        LOGGER.error(ex.getMessage(), ex);
+        JustBadCredentialsAPIException justBadCredentialsAPIException = new JustBadCredentialsAPIException(
+                "AccessDeniedException : " + ex.getMessage(), null);
+        updateProperties(req, justBadCredentialsAPIException);
+        setGeneralExceptionAsCause(ex, justBadCredentialsAPIException);
+        return new ResponseEntity<>(justBadCredentialsAPIException,
+                HttpStatus.valueOf(justBadCredentialsAPIException.getStatus()));
     }
 
     @ExceptionHandler({NoHandlerFoundException.class})

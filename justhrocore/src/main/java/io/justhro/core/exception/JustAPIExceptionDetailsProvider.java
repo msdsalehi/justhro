@@ -9,4 +9,6 @@ public interface JustAPIExceptionDetailsProvider {
     String getDetail();
 
     Object[] getDetailArgs();
+
+    String getRootCauseCode();
 }

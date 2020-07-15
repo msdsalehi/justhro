@@ -18,34 +18,34 @@ package io.justhro.core.exception;
 
 import org.springframework.http.HttpStatus;
 
-public class JustAccessDeniedAPIException extends JustAPIException {
+public class JustBadCredentialsAPIException extends JustAPIException {
 
-    public JustAccessDeniedAPIException() {
+    public JustBadCredentialsAPIException() {
     }
 
-    public JustAccessDeniedAPIException(JustAPIException rootCause) {
+    public JustBadCredentialsAPIException(JustAPIException rootCause) {
         super(rootCause);
     }
 
-    public JustAccessDeniedAPIException(String message, JustAPIException rootCause) {
+    public JustBadCredentialsAPIException(String message, JustAPIException rootCause) {
         super(message, rootCause);
     }
 
-    public JustAccessDeniedAPIException(String message, Throwable cause, JustAPIException rootCause) {
+    public JustBadCredentialsAPIException(String message, Throwable cause, JustAPIException rootCause) {
         super(message, cause, rootCause);
     }
 
-    public JustAccessDeniedAPIException(Throwable cause, JustAPIException rootCause) {
+    public JustBadCredentialsAPIException(Throwable cause, JustAPIException rootCause) {
         super(cause, rootCause);
     }
 
     @Override
     public int getStatus() {
-        return HttpStatus.FORBIDDEN.value();
+        return HttpStatus.UNAUTHORIZED.value();
     }
 
     @Override
     public String getCode() {
-        return INTERNAL_CODE_PREFIX + HttpStatus.FORBIDDEN.value();
+        return INTERNAL_CODE_PREFIX + HttpStatus.UNAUTHORIZED.value();
     }
 }
