@@ -16,8 +16,6 @@
  */
 package io.justhro.service.advice;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.justhro.core.exception.*;
 import io.justhro.core.util.ReflectionUtil;
 import org.slf4j.Logger;
@@ -27,6 +25,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
@@ -49,7 +48,7 @@ public class JustAdvice {
 
     private static final UrlPathHelper URL_PATH_HELPER = new UrlPathHelper();
     private static final Logger LOGGER = LoggerFactory.getLogger(JustAdvice.class);
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final MediaType DEFAULT_MEDIA_TYPE = MediaType.APPLICATION_PROBLEM_JSON;
     private static final String DEFAULT_TYPE = "about:blank";
     private static final String DEFAULT_TITLE = "Error";
     private static final String DETAIL_PROP_NAME = "detail";
@@ -148,8 +147,9 @@ public class JustAdvice {
                 "MethodArgumentNotValidException : " + ex.getMessage(), null);
         updateProperties(req, justBadRequestAPIException);
         setGeneralExceptionAsCause(ex, justBadRequestAPIException);
-        return new ResponseEntity<>(justBadRequestAPIException,
-                HttpStatus.valueOf(justBadRequestAPIException.getStatus()));
+        return ResponseEntity.status(justBadRequestAPIException.getStatus())
+                .contentType(DEFAULT_MEDIA_TYPE)
+                .body(justBadRequestAPIException);
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
@@ -161,8 +161,9 @@ public class JustAdvice {
                 "HttpMessageNotReadableException : " + ex.getMessage(), null);
         updateProperties(req, justBadRequestAPIException);
         setGeneralExceptionAsCause(ex, justBadRequestAPIException);
-        return new ResponseEntity<>(justBadRequestAPIException,
-                HttpStatus.valueOf(justBadRequestAPIException.getStatus()));
+        return ResponseEntity.status(justBadRequestAPIException.getStatus())
+                .contentType(DEFAULT_MEDIA_TYPE)
+                .body(justBadRequestAPIException);
     }
 
     @ExceptionHandler(ServletException.class)
@@ -174,8 +175,9 @@ public class JustAdvice {
                 "ServletException : " + ex.getMessage(), null);
         updateProperties(req, justBadRequestAPIException);
         setGeneralExceptionAsCause(ex, justBadRequestAPIException);
-        return new ResponseEntity<>(justBadRequestAPIException,
-                HttpStatus.valueOf(justBadRequestAPIException.getStatus()));
+        return ResponseEntity.status(justBadRequestAPIException.getStatus())
+                .contentType(DEFAULT_MEDIA_TYPE)
+                .body(justBadRequestAPIException);
     }
 
     @ExceptionHandler(AccessDeniedException.class)
@@ -187,8 +189,9 @@ public class JustAdvice {
                 "AccessDeniedException : " + ex.getMessage(), null);
         updateProperties(req, justAccessDeniedAPIException);
         setGeneralExceptionAsCause(ex, justAccessDeniedAPIException);
-        return new ResponseEntity<>(justAccessDeniedAPIException,
-                HttpStatus.valueOf(justAccessDeniedAPIException.getStatus()));
+        return ResponseEntity.status(justAccessDeniedAPIException.getStatus())
+                .contentType(DEFAULT_MEDIA_TYPE)
+                .body(justAccessDeniedAPIException);
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
@@ -200,8 +203,9 @@ public class JustAdvice {
                 "AccessDeniedException : " + ex.getMessage(), null);
         updateProperties(req, methodNotSupportedException);
         setGeneralExceptionAsCause(ex, methodNotSupportedException);
-        return new ResponseEntity<>(methodNotSupportedException,
-                HttpStatus.valueOf(methodNotSupportedException.getStatus()));
+        return ResponseEntity.status(methodNotSupportedException.getStatus())
+                .contentType(DEFAULT_MEDIA_TYPE)
+                .body(methodNotSupportedException);
     }
 
     @ExceptionHandler(BadCredentialsException.class)
@@ -213,8 +217,9 @@ public class JustAdvice {
                 "AccessDeniedException : " + ex.getMessage(), null);
         updateProperties(req, justBadCredentialsAPIException);
         setGeneralExceptionAsCause(ex, justBadCredentialsAPIException);
-        return new ResponseEntity<>(justBadCredentialsAPIException,
-                HttpStatus.valueOf(justBadCredentialsAPIException.getStatus()));
+        return ResponseEntity.status(justBadCredentialsAPIException.getStatus())
+                .contentType(DEFAULT_MEDIA_TYPE)
+                .body(justBadCredentialsAPIException);
     }
 
     @ExceptionHandler({NoHandlerFoundException.class})
@@ -226,7 +231,9 @@ public class JustAdvice {
                 "NoHandlerFoundException : " + ex.getMessage(), null);
         updateProperties(req, justNotFoundAPIException);
         setGeneralExceptionAsCause(ex, justNotFoundAPIException);
-        return new ResponseEntity<>(justNotFoundAPIException, HttpStatus.valueOf(justNotFoundAPIException.getStatus()));
+        return ResponseEntity.status(justNotFoundAPIException.getStatus())
+                .contentType(DEFAULT_MEDIA_TYPE)
+                .body(justNotFoundAPIException);
     }
 
     @ExceptionHandler({JustAPIException.class})
@@ -234,7 +241,9 @@ public class JustAdvice {
     public ResponseEntity<JustAPIException> handleJustAPIException(HttpServletRequest req, JustAPIException ex) {
         LOGGER.error(ex.getMessage(), ex);
         updateProperties(req, ex);
-        return new ResponseEntity<>(ex, HttpStatus.valueOf(ex.getStatus()));
+        return ResponseEntity.status(ex.getStatus())
+                .contentType(DEFAULT_MEDIA_TYPE)
+                .body(ex);
     }
 
     @ExceptionHandler({JustAPICheckedException.class})
@@ -243,7 +252,9 @@ public class JustAdvice {
             HttpServletRequest req, JustAPICheckedException ex) {
         LOGGER.error(ex.getMessage(), ex);
         updateProperties(req, ex);
-        return new ResponseEntity<>(ex, HttpStatus.valueOf(ex.getStatus()));
+        return ResponseEntity.status(ex.getStatus())
+                .contentType(DEFAULT_MEDIA_TYPE)
+                .body(ex);
     }
 
     @ExceptionHandler(Throwable.class)
@@ -255,6 +266,8 @@ public class JustAdvice {
                 ex.getClass().getSimpleName() + " : " + ex.getMessage(), null);
         updateProperties(req, justUnknownAPIException);
         setGeneralExceptionAsCause(ex, justUnknownAPIException);
-        return new ResponseEntity<>(justUnknownAPIException, HttpStatus.INTERNAL_SERVER_ERROR);
+        return ResponseEntity.status(justUnknownAPIException.getStatus())
+                .contentType(DEFAULT_MEDIA_TYPE)
+                .body(justUnknownAPIException);
     }
 }
