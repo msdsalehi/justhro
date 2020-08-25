@@ -89,7 +89,7 @@ public abstract class JustAPIException extends RuntimeException implements JustA
     }
 
     public String getDetail() {
-        return detail;
+        return detail == null ? getMessage() : detail;
     }
 
     public String getInstance() {

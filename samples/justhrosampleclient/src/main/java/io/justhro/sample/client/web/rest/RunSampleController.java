@@ -20,7 +20,7 @@ public class RunSampleController {
     }
 
     @GetMapping("/{name}")
-    public ResponseEntity<String> sayHello(@PathVariable("name") String name) {
+    public ResponseEntity<String> sayHello(@PathVariable("name") String name) throws WrongNameException {
         try {
             return sampleRemote.sayHello(name);
         } catch (WrongNameException e) {

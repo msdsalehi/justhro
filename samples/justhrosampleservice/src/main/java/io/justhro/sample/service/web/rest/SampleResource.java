@@ -14,7 +14,7 @@ public class SampleResource implements SampleRemote {
 
     @Override
     @GetMapping("/{name}")
-    public ResponseEntity<String> sayHello(@PathVariable("name") String name) {
+    public ResponseEntity<String> sayHello(@PathVariable("name") String name) throws WrongNameException {
         if (name == null || name.isEmpty() || name.equalsIgnoreCase("ali")){
             WrongNameException wrongNameException = new WrongNameException("messsage", null);
             wrongNameException.addCause("cause 1");

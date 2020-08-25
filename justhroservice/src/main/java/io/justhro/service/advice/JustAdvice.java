@@ -36,6 +36,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.util.UrlPathHelper;
 
@@ -136,6 +137,20 @@ public class JustAdvice {
         setInstance(req, ex);
         setType(ex);
         setTitle(ex);
+    }
+
+    @ExceptionHandler(ResponseStatusException.class)
+    @ResponseBody
+    public ResponseEntity<JustAPIException> handleMethodArgumentNotValidException(
+            HttpServletRequest req, ResponseStatusException ex) {
+        LOGGER.error(ex.getMessage(), ex);
+        JustResponseStatusAPIException responseStatusAPIException = new JustResponseStatusAPIException(
+                ex.getReason(), null, ex.getStatus().value());
+        updateProperties(req, responseStatusAPIException);
+        setGeneralExceptionAsCause(ex, responseStatusAPIException);
+        return ResponseEntity.status(responseStatusAPIException.getStatus())
+                .contentType(DEFAULT_MEDIA_TYPE)
+                .body(responseStatusAPIException);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

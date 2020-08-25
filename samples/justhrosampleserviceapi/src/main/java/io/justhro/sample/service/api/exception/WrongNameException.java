@@ -1,8 +1,9 @@
 package io.justhro.sample.service.api.exception;
 
+import io.justhro.core.exception.JustAPICheckedException;
 import io.justhro.core.exception.JustAPIException;
 
-public class WrongNameException extends JustAPIException {
+public class WrongNameException extends JustAPICheckedException {
 
     public WrongNameException(String message, Throwable cause, JustAPIException rootCause) {
         super(message, cause, rootCause);

@@ -51,6 +51,20 @@
             <optional>true</optional>
         </dependency>
     </dependencies>
+    <repositories>
+        <repository>
+            <id>nexus-maven-public</id>
+            <name>Kian Maven Repository</name>
+            <url>http://nexus.kian.digital/repository/maven-public</url>
+        </repository>
+    </repositories>
+    <distributionManagement>
+        <repository>
+            <id>nexus-kian-digital</id>
+            <name>Kian Private Repository</name>
+            <url>http://nexus.kian.digital/repository/kian-digital</url>
+        </repository>
+    </distributionManagement>
 
     <build>
         <plugins>
